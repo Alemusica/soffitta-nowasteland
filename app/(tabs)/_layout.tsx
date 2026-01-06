@@ -1,11 +1,19 @@
+/**
+ * Tabs Layout - Soffitta NoWasteLand
+ * 
+ * Swiss Typography Design - Clean minimal navigation
+ */
+
 import { Redirect, Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/authStore';
+import { useColors } from '@/stores/themeStore';
 
 export default function TabsLayout() {
   const session = useAuthStore((state) => state.session);
+  const colors = useColors();
   
-  // Se non loggato, vai al login
+  // Redirect to login if not authenticated
   if (!session) {
     return <Redirect href="/(auth)/login" />;
   }
@@ -14,54 +22,61 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#1a1a2e',
+          backgroundColor: colors.surface,
         },
-        headerTintColor: '#fff',
+        headerTintColor: colors.text,
         headerTitleStyle: {
-          fontWeight: '600',
+          fontFamily: 'Inter_500Medium',
+          fontWeight: '500',
+          fontSize: 17,
+          letterSpacing: -0.3,
         },
+        headerShadowVisible: false,
         tabBarStyle: {
-          backgroundColor: '#1a1a2e',
-          borderTopColor: '#2a2a4e',
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
           paddingBottom: 8,
           paddingTop: 8,
           height: 64,
         },
-        tabBarActiveTintColor: '#e94560',
-        tabBarInactiveTintColor: '#666',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontFamily: 'Inter_500Medium',
+          fontSize: 10,
           fontWeight: '500',
+          letterSpacing: 0.5,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'La mia Soffitta',
-          tabBarLabel: 'Inventario',
+          headerShown: false,
+          tabBarLabel: 'Soffitta',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="file-tray-stacked" size={size} color={color} />
+            <Ionicons name="cube-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Cerca nei dintorni',
+          title: 'Cerca',
           tabBarLabel: 'Cerca',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search" size={size} color={color} />
+            <Ionicons name="search-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="add"
         options={{
-          title: 'Aggiungi oggetto',
+          title: 'Aggiungi',
           tabBarLabel: 'Aggiungi',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={size} color={color} />
+            <Ionicons name="add-circle-outline" size={size} color={color} />
           ),
         }}
       />
@@ -69,9 +84,9 @@ export default function TabsLayout() {
         name="messages"
         options={{
           title: 'Messaggi',
-          tabBarLabel: 'Chat',
+          tabBarLabel: 'Messaggi',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubbles" size={size} color={color} />
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
         }}
       />
@@ -81,7 +96,7 @@ export default function TabsLayout() {
           title: 'Profilo',
           tabBarLabel: 'Profilo',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />

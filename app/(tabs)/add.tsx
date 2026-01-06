@@ -25,6 +25,7 @@ import {
   ItemLabel,
 } from '@/constants/labels';
 import { ItemCondition, ItemVisibility, SharingMode } from '@/lib/database.types';
+import { VoiceInput } from '@/components/VoiceInput';
 
 type InputMode = 'manual' | 'voice';
 
@@ -217,19 +218,41 @@ export default function AddItemScreen() {
       {inputMode === 'voice' ? (
         // VOICE MODE
         <View style={styles.voiceMode}>
-          <View style={styles.voiceCircle}>
-            <Ionicons name="mic" size={48} color="#e94560" />
-          </View>
-          <Text style={styles.voiceTitle}>Riordino vocale</Text>
+          <Text style={styles.voiceTitle}>🎙️ Riordino vocale</Text>
           <Text style={styles.voiceSubtitle}>
-            Parla e descrivi l'oggetto che hai trovato.
+            Tieni premuto il pulsante e descrivi l'oggetto.
             {'\n'}Es: "Ho trovato un cavetto USB-C bianco, un po' rovinato, l'ho messo sopra l'armadio in camera"
           </Text>
-          <TouchableOpacity style={styles.voiceButton}>
-            <Text style={styles.voiceButtonText}>🎙️ Inizia a parlare</Text>
-          </TouchableOpacity>
-          <Text style={styles.voiceHint}>
-            (Funzionalità in arrivo - usa il modo manuale per ora)
+          
+          <VoiceInput
+            onTranscription={(text) => {
+              // Popola automaticamente il nome con il testo trascritto
+              setName(text);
+              // Passa alla modalità manuale per revisione
+              setInputMode('manual');
+              Alert.alert(
+                '✅ Trascrizione completata',
+                `Testo riconosciuto:\n\n"${text}"\n\nRivedi e completa i dettagli.`,
+                [{ text: 'OK' }]
+              );
+            }}
+            onError={(error) => {
+              Alert.alert('Errore', error);
+            }}
+            placeholder="Tieni premuto per parlare"
+          />
+          
+          <View style={styles.voiceHintBox}>
+            <Text style={styles.voiceHintTitle}>💡 Suggerimenti</Text>
+            <Text style={styles.voiceHint}>
+              • Parla chiaramente e senza fretta{'\n'}
+              • Indica nome, posizione e condizioni{'\n'}
+              • Dopo la trascrizione potrai modificare
+            </Text>
+          </View>
+          
+          <Text style={styles.neuronCare}>
+            🧠 "Care your neurons" - Prima di chiedere all'AI, prova a ricordare!
           </Text>
         </View>
       ) : (
@@ -583,11 +606,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  voiceHintBox: {
+    backgroundColor: '#1a1a2e',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 20,
+    width: '100%',
+  },
+  voiceHintTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
   voiceHint: {
-    marginTop: 16,
-    color: '#666',
+    color: '#888',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  neuronCare: {
+    marginTop: 20,
+    color: '#4A90A4',
     fontSize: 12,
     fontStyle: 'italic',
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   section: {
     marginBottom: 24,
