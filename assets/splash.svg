@@ -1,0 +1,49 @@
+<svg width="1284" height="2778" viewBox="0 0 1284 2778" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f1a"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#e94560;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#e94560;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  
+  <rect width="1284" height="2778" fill="url(#bg-gradient)"/>
+  
+  <!-- Glow effect -->
+  <ellipse cx="642" cy="1100" rx="600" ry="600" fill="url(#glow)"/>
+  
+  <!-- House icon -->
+  <g transform="translate(442, 900)">
+    <!-- Roof / Attic shape -->
+    <path d="M200 0L0 150V400H400V150L200 0Z" fill="#1a1a2e" stroke="#2a2a4e" stroke-width="4"/>
+    
+    <!-- Roof accent -->
+    <path d="M200 0L0 150H400L200 0Z" fill="#e94560"/>
+    
+    <!-- Door -->
+    <rect x="150" y="220" width="100" height="180" rx="8" fill="#2a2a4e"/>
+    <circle cx="225" cy="310" r="10" fill="#e94560"/>
+    
+    <!-- Window left -->
+    <rect x="40" y="180" width="80" height="80" rx="4" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="2"/>
+    
+    <!-- Window right -->
+    <rect x="280" y="180" width="80" height="80" rx="4" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="2"/>
+    
+    <!-- Attic window -->
+    <circle cx="200" cy="100" r="35" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="2"/>
+  </g>
+  
+  <!-- App name -->
+  <text x="642" y="1450" font-family="Georgia, serif" font-size="96" font-weight="400" fill="#ffffff" text-anchor="middle">Soffitta</text>
+  
+  <!-- Tagline -->
+  <text x="642" y="1530" font-family="system-ui, sans-serif" font-size="32" fill="#888888" text-anchor="middle">L'inventario collettivo di quartiere</text>
+  
+  <!-- Philosophy -->
+  <text x="642" y="1650" font-family="system-ui, sans-serif" font-size="24" fill="#e94560" text-anchor="middle">🧠 Care your neurons!</text>
+</svg>

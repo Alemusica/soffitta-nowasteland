@@ -1,0 +1,26 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- This is the foreground layer for Android adaptive icons -->
+  <!-- Background should be solid color defined in app.json -->
+  
+  <!-- House centered for safe zone (inner 66%) -->
+  <g transform="translate(262, 262) scale(0.5)">
+    <!-- Roof / Attic shape -->
+    <path d="M512 180L180 420V844H844V420L512 180Z" fill="#1a1a2e" stroke="#2a2a4e" stroke-width="8"/>
+    
+    <!-- Roof accent -->
+    <path d="M512 180L180 420H844L512 180Z" fill="#e94560"/>
+    
+    <!-- Door -->
+    <rect x="432" y="564" width="160" height="280" rx="12" fill="#2a2a4e"/>
+    <circle cx="552" cy="704" r="16" fill="#e94560"/>
+    
+    <!-- Window left -->
+    <rect x="244" y="484" width="120" height="120" rx="8" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+    
+    <!-- Window right -->
+    <rect x="660" y="484" width="120" height="120" rx="8" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+    
+    <!-- Attic window -->
+    <circle cx="512" cy="340" r="60" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+  </g>
+</svg>

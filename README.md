@@ -23,11 +23,14 @@ Un inventario condiviso di quartiere. Mentre riordini, parli all'app. L'app crea
 
 Ogni 3 volte che chiedi "dove ho messo X?", l'app ti invita gentilmente a ricordare da solo. Perché la memoria è un muscolo, e l'AI non deve atrofizzarlo.
 
+> 📜 **Leggi il [MANIFESTO.md](./MANIFESTO.md)** - La nostra visione completa per un uso consapevole dell'AI, con proposte di policy aziendali per il benessere cognitivo.
+
 ### Ricerche Scientifiche di Riferimento
 
-- **MIT Media Lab (2024)**: "Cognitive Offloading and Memory Dependency" - Studio su come l'uso eccessivo di assistenti digitali riduce la capacità di memoria a breve termine.
-- **Nature Human Behaviour (2023)**: "The Google Effect on Memory" - Analisi dell'effetto della disponibilità immediata di informazioni sulla formazione di ricordi.
-- **Harvard Business Review (2025)**: "AI Assistance and Cognitive Decline" - Report sull'impatto degli assistenti AI sulla capacità decisionale autonoma.
+- **Sparrow et al. (2011)** - "Google Effects on Memory" - Science
+- **Storm et al. (2017)** - "Using the Internet to Access Information Inflates Future Use" - Memory
+- **Risko & Gilbert (2016)** - "Cognitive Offloading" - Trends in Cognitive Sciences
+- **Barr et al. (2015)** - "The brain in your pocket" - Computers in Human Behavior
 
 **Noi crediamo che la tecnologia debba potenziare l'umano, non sostituirlo.**
 

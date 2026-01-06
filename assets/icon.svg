@@ -1,0 +1,32 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#0f0f1a"/>
+  
+  <!-- Roof / Attic shape -->
+  <path d="M512 180L180 420V844H844V420L512 180Z" fill="#1a1a2e" stroke="#2a2a4e" stroke-width="8"/>
+  
+  <!-- Roof accent -->
+  <path d="M512 180L180 420H844L512 180Z" fill="#e94560"/>
+  
+  <!-- Door -->
+  <rect x="432" y="564" width="160" height="280" rx="12" fill="#2a2a4e"/>
+  <circle cx="552" cy="704" r="16" fill="#e94560"/>
+  
+  <!-- Window left -->
+  <rect x="244" y="484" width="120" height="120" rx="8" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="304" y1="484" x2="304" y2="604" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="244" y1="544" x2="364" y2="544" stroke="#2a2a4e" stroke-width="4"/>
+  
+  <!-- Window right -->
+  <rect x="660" y="484" width="120" height="120" rx="8" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="720" y1="484" x2="720" y2="604" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="660" y1="544" x2="780" y2="544" stroke="#2a2a4e" stroke-width="4"/>
+  
+  <!-- Attic window (circular) -->
+  <circle cx="512" cy="340" r="60" fill="#0f0f1a" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="512" y1="280" x2="512" y2="400" stroke="#2a2a4e" stroke-width="4"/>
+  <line x1="452" y1="340" x2="572" y2="340" stroke="#2a2a4e" stroke-width="4"/>
+  
+  <!-- Brain emoji suggestion in attic window -->
+  <text x="512" y="355" font-size="48" text-anchor="middle" fill="#e94560">🧠</text>
+</svg>
