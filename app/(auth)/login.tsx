@@ -1,3 +1,10 @@
+/**
+ * Login Screen - Soffitta NoWasteLand
+ * 
+ * Swiss Typography Design
+ * Clean, warm, calming aesthetic
+ */
+
 import { useState } from 'react';
 import {
   View,
@@ -12,8 +19,10 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
+import { useColors } from '@/stores/themeStore';
 
 export default function LoginScreen() {
+  const colors = useColors();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signInWithEmail, isLoading } = useAuthStore();
@@ -36,50 +45,67 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
       <View style={styles.content}>
-        {/* Logo e titolo */}
+        {/* Header - Swiss minimal */}
         <View style={styles.header}>
-          <Text style={styles.emoji}>🏚️</Text>
-          <Text style={styles.title}>Soffitta</Text>
-          <Text style={styles.subtitle}>NoWasteLand</Text>
-          <Text style={styles.tagline}>
+          <Text style={[styles.brandMark, { color: colors.primary }]}>S</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Soffitta</Text>
+          <Text style={[styles.tagline, { color: colors.textMuted }]}>
             L'inventario collettivo di quartiere
           </Text>
         </View>
         
-        {/* Form */}
+        {/* Form - Clean inputs */}
         <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>EMAIL</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
               value={email}
               onChangeText={setEmail}
-              placeholder="la-tua@email.it"
-              placeholderTextColor="#666"
+              placeholder="nome@email.it"
+              placeholderTextColor={colors.textMuted}
               autoCapitalize="none"
               keyboardType="email-address"
               autoComplete="email"
             />
           </View>
           
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>PASSWORD</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
               value={password}
               onChangeText={setPassword}
               placeholder="••••••••"
-              placeholderTextColor="#666"
+              placeholderTextColor={colors.textMuted}
               secureTextEntry
               autoComplete="password"
             />
           </View>
           
           <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              { backgroundColor: colors.primary },
+              isLoading && styles.buttonDisabled,
+            ]}
             onPress={handleLogin}
             disabled={isLoading}
           >
@@ -91,22 +117,23 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
         
-        {/* Link registrazione */}
+        {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Non hai un account? </Text>
+          <Text style={[styles.footerText, { color: colors.textMuted }]}>
+            Non hai un account?{' '}
+          </Text>
           <Link href="/(auth)/register" asChild>
             <TouchableOpacity>
-              <Text style={styles.link}>Registrati</Text>
+              <Text style={[styles.link, { color: colors.primary }]}>Registrati</Text>
             </TouchableOpacity>
           </Link>
         </View>
         
-        {/* Filosofia */}
-        <View style={styles.philosophy}>
-          <Text style={styles.philosophyText}>
-            🧠 Human assistance, not human substitution
+        {/* Philosophy - subtle */}
+        <View style={[styles.philosophy, { borderColor: colors.border }]}>
+          <Text style={[styles.philosophyText, { color: colors.textMuted }]}>
+            🧠 Care your neurons
           </Text>
-          <Text style={styles.philosophySubtext}>Care your neurons!</Text>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -116,62 +143,54 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f1a',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
     justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 48,
   },
-  emoji: {
-    fontSize: 64,
-    marginBottom: 8,
+  brandMark: {
+    fontSize: 72,
+    fontWeight: '200',
+    letterSpacing: -4,
+    marginBottom: -8,
   },
   title: {
-    fontSize: 36,
-    fontWeight: '700',
-    color: '#fff',
-    letterSpacing: -1,
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#e94560',
-    marginTop: 4,
+    fontSize: 28,
+    fontWeight: '300',
+    letterSpacing: -0.5,
   },
   tagline: {
-    fontSize: 14,
-    color: '#888',
+    fontSize: 13,
+    fontWeight: '400',
     marginTop: 8,
+    letterSpacing: 0.5,
   },
   form: {
-    gap: 16,
+    gap: 20,
   },
-  inputContainer: {
-    gap: 6,
+  inputGroup: {
+    gap: 8,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#ccc',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.5,
   },
   input: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
     fontSize: 16,
-    color: '#fff',
+    fontWeight: '400',
     borderWidth: 1,
-    borderColor: '#2a2a4e',
   },
   button: {
-    backgroundColor: '#e94560',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 8,
@@ -181,37 +200,32 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: 0.5,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
   footerText: {
-    color: '#888',
     fontSize: 14,
+    fontWeight: '400',
   },
   link: {
-    color: '#e94560',
     fontSize: 14,
     fontWeight: '500',
   },
   philosophy: {
     marginTop: 48,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingTop: 24,
+    borderTopWidth: 1,
   },
   philosophyText: {
-    color: '#666',
     fontSize: 12,
-    textAlign: 'center',
-  },
-  philosophySubtext: {
-    color: '#e94560',
-    fontSize: 11,
-    marginTop: 4,
-    fontStyle: 'italic',
+    fontWeight: '400',
+    letterSpacing: 0.5,
   },
 });

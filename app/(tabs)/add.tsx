@@ -1,4 +1,11 @@
-import { useState, useCallback } from 'react';
+/**
+ * Add Item Screen - Soffitta NoWasteLand
+ * 
+ * Swiss Typography Design - Economia circolare
+ * Riuso, non prestito/baratto/vendita
+ */
+
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -24,12 +31,14 @@ import {
   COMMON_FURNITURE,
   ItemLabel,
 } from '@/constants/labels';
-import { ItemCondition, ItemVisibility, SharingMode } from '@/lib/database.types';
+import { ItemCondition, ItemVisibility } from '@/lib/database.types';
 import { VoiceInput } from '@/components/VoiceInput';
+import { useColors } from '@/stores/themeStore';
 
 type InputMode = 'manual' | 'voice';
 
 export default function AddItemScreen() {
+  const colors = useColors();
   const { addItem, categories } = useItemsStore();
   const { user } = useAuthStore();
   
@@ -46,13 +55,13 @@ export default function AddItemScreen() {
   
   // Location
   const [locationRoom, setLocationRoom] = useState('');
+  const [locationRoomCustom, setLocationRoomCustom] = useState('');
   const [locationFurniture, setLocationFurniture] = useState('');
+  const [locationFurnitureCustom, setLocationFurnitureCustom] = useState('');
   const [locationDetail, setLocationDetail] = useState('');
   
-  // Visibility
+  // Visibility - semplificato: solo privato o riuso
   const [visibility, setVisibility] = useState<ItemVisibility>('private');
-  const [sharingMode, setSharingMode] = useState<SharingMode | null>(null);
-  const [price, setPrice] = useState('');
   
   // Loading
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +109,7 @@ export default function AddItemScreen() {
     }
   };
   
-  // Upload image to Supabase Storage
+  // Upload image
   const uploadImage = async (uri: string) => {
     if (!user) return;
     
@@ -108,21 +117,15 @@ export default function AddItemScreen() {
     
     try {
       const filename = `${user.id}/${Date.now()}.jpg`;
-      
-      // Fetch the image as blob
       const response = await fetch(uri);
       const blob = await response.blob();
       
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('item-photos')
-        .upload(filename, blob, {
-          contentType: 'image/jpeg',
-        });
+        .upload(filename, blob, { contentType: 'image/jpeg' });
       
       if (error) throw error;
       
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('item-photos')
         .getPublicUrl(filename);
@@ -139,6 +142,38 @@ export default function AddItemScreen() {
   // Remove photo
   const removePhoto = (index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
+  };
+  
+  // Get final room name
+  const getFinalRoom = () => {
+    if (locationRoom === 'Altro' && locationRoomCustom) {
+      return locationRoomCustom;
+    }
+    return locationRoom;
+  };
+  
+  // Get final furniture name
+  const getFinalFurniture = () => {
+    if (locationFurniture === 'Altro' && locationFurnitureCustom) {
+      return locationFurnitureCustom;
+    }
+    return locationFurniture;
+  };
+  
+  // Reset form
+  const resetForm = () => {
+    setName('');
+    setDescription('');
+    setCategoryId(null);
+    setCondition('buono');
+    setSelectedLabels(['disponibile']);
+    setPhotos([]);
+    setLocationRoom('');
+    setLocationRoomCustom('');
+    setLocationFurniture('');
+    setLocationFurnitureCustom('');
+    setLocationDetail('');
+    setVisibility('private');
   };
   
   // Submit
@@ -163,12 +198,12 @@ export default function AddItemScreen() {
       condition,
       labels: selectedLabels,
       photos,
-      location_room: locationRoom || null,
-      location_furniture: locationFurniture || null,
+      location_room: getFinalRoom() || null,
+      location_furniture: getFinalFurniture() || null,
       location_detail: locationDetail || null,
       visibility,
-      sharing_mode: visibility === 'public' ? sharingMode : null,
-      price_cents: price ? Math.round(parseFloat(price) * 100) : null,
+      sharing_mode: null, // Rimosso - economia orizzontale pura
+      price_cents: null,  // Rimosso - tutto gratuito
     });
     
     setIsLoading(false);
@@ -176,41 +211,54 @@ export default function AddItemScreen() {
     if (error) {
       Alert.alert('Errore', error.message);
     } else {
-      Alert.alert('Fatto! 🎉', 'Oggetto aggiunto alla tua soffitta', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      Alert.alert(
+        '✓ Aggiunto',
+        `"${name}" è nella tua soffitta`,
+        [{ 
+          text: 'OK', 
+          onPress: () => {
+            resetForm();
+            router.push('/(tabs)');
+          }
+        }]
+      );
     }
   };
   
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Mode toggle */}
-      <View style={styles.modeToggle}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: colors.background }]} 
+      contentContainerStyle={styles.content}
+    >
+      {/* Mode toggle - Minimal */}
+      <View style={[styles.modeToggle, { backgroundColor: colors.surface }]}>
         <TouchableOpacity
-          style={[styles.modeButton, inputMode === 'manual' && styles.modeButtonActive]}
+          style={[
+            styles.modeButton, 
+            inputMode === 'manual' && { backgroundColor: colors.primary }
+          ]}
           onPress={() => setInputMode('manual')}
         >
-          <Ionicons
-            name="create-outline"
-            size={20}
-            color={inputMode === 'manual' ? '#fff' : '#888'}
-          />
-          <Text style={[styles.modeText, inputMode === 'manual' && styles.modeTextActive]}>
-            Manuale
+          <Text style={[
+            styles.modeText, 
+            { color: inputMode === 'manual' ? '#fff' : colors.textMuted }
+          ]}>
+            Scrivi
           </Text>
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[styles.modeButton, inputMode === 'voice' && styles.modeButtonActive]}
+          style={[
+            styles.modeButton, 
+            inputMode === 'voice' && { backgroundColor: colors.primary }
+          ]}
           onPress={() => setInputMode('voice')}
         >
-          <Ionicons
-            name="mic-outline"
-            size={20}
-            color={inputMode === 'voice' ? '#fff' : '#888'}
-          />
-          <Text style={[styles.modeText, inputMode === 'voice' && styles.modeTextActive]}>
-            Vocale
+          <Text style={[
+            styles.modeText, 
+            { color: inputMode === 'voice' ? '#fff' : colors.textMuted }
+          ]}>
+            Parla
           </Text>
         </TouchableOpacity>
       </View>
@@ -218,116 +266,84 @@ export default function AddItemScreen() {
       {inputMode === 'voice' ? (
         // VOICE MODE
         <View style={styles.voiceMode}>
-          <Text style={styles.voiceTitle}>🎙️ Riordino vocale</Text>
-          <Text style={styles.voiceSubtitle}>
-            Tieni premuto il pulsante e descrivi l'oggetto.
-            {'\n'}Es: "Ho trovato un cavetto USB-C bianco, un po' rovinato, l'ho messo sopra l'armadio in camera"
-          </Text>
-          
           <VoiceInput
             onTranscription={(text) => {
-              // Popola automaticamente il nome con il testo trascritto
               setName(text);
-              // Passa alla modalità manuale per revisione
               setInputMode('manual');
               Alert.alert(
-                '✅ Trascrizione completata',
-                `Testo riconosciuto:\n\n"${text}"\n\nRivedi e completa i dettagli.`,
+                '✓ Trascritto',
+                `"${text}"\n\nRivedi e completa.`,
                 [{ text: 'OK' }]
               );
             }}
             onError={(error) => {
               Alert.alert('Errore', error);
             }}
-            placeholder="Tieni premuto per parlare"
+            placeholder="Tieni premuto e parla"
           />
           
-          <View style={styles.voiceHintBox}>
-            <Text style={styles.voiceHintTitle}>💡 Suggerimenti</Text>
-            <Text style={styles.voiceHint}>
-              • Parla chiaramente e senza fretta{'\n'}
-              • Indica nome, posizione e condizioni{'\n'}
-              • Dopo la trascrizione potrai modificare
-            </Text>
-          </View>
-          
-          <Text style={styles.neuronCare}>
-            🧠 "Care your neurons" - Prima di chiedere all'AI, prova a ricordare!
+          <Text style={[styles.voiceHint, { color: colors.textMuted }]}>
+            Es: "Cacciavite a stella, nel cassetto della scrivania in studio"
           </Text>
         </View>
       ) : (
         // MANUAL MODE
         <>
-          {/* Photos */}
+          {/* Nome - Campo principale */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📷 Foto</Text>
-            <View style={styles.photosGrid}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>NOME</Text>
+            <TextInput
+              style={[styles.input, { 
+                backgroundColor: colors.surface, 
+                borderColor: colors.border,
+                color: colors.text 
+              }]}
+              value={name}
+              onChangeText={setName}
+              placeholder="Cosa hai trovato?"
+              placeholderTextColor={colors.textMuted}
+              autoFocus
+            />
+          </View>
+          
+          {/* Foto */}
+          <View style={styles.section}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>FOTO</Text>
+            <View style={styles.photosRow}>
               {photos.map((photo, index) => (
-                <View key={index} style={styles.photoContainer}>
-                  <Image source={{ uri: photo }} style={styles.photo} />
+                <View key={index} style={styles.photoThumb}>
+                  <Image source={{ uri: photo }} style={styles.photoImage} />
                   <TouchableOpacity
                     style={styles.photoRemove}
                     onPress={() => removePhoto(index)}
                   >
-                    <Ionicons name="close" size={16} color="#fff" />
+                    <Ionicons name="close" size={14} color="#fff" />
                   </TouchableOpacity>
                 </View>
               ))}
               
-              {photos.length < 4 && (
-                <View style={styles.photoActions}>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={takePhoto}
-                    disabled={isUploading}
-                  >
-                    {isUploading ? (
-                      <ActivityIndicator color="#e94560" />
-                    ) : (
-                      <Ionicons name="camera" size={24} color="#e94560" />
-                    )}
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={pickImage}
-                    disabled={isUploading}
-                  >
-                    <Ionicons name="images" size={24} color="#e94560" />
-                  </TouchableOpacity>
-                </View>
+              {photos.length < 3 && (
+                <TouchableOpacity
+                  style={[styles.photoAdd, { 
+                    backgroundColor: colors.surface, 
+                    borderColor: colors.border 
+                  }]}
+                  onPress={pickImage}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <ActivityIndicator color={colors.primary} size="small" />
+                  ) : (
+                    <Ionicons name="camera-outline" size={22} color={colors.textMuted} />
+                  )}
+                </TouchableOpacity>
               )}
             </View>
           </View>
           
-          {/* Name */}
+          {/* Categoria */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📦 Nome *</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Es: Cavetto USB-C bianco"
-              placeholderTextColor="#666"
-            />
-          </View>
-          
-          {/* Description */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📝 Descrizione</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Descrivi l'oggetto (opzionale)"
-              placeholderTextColor="#666"
-              multiline
-              numberOfLines={3}
-            />
-          </View>
-          
-          {/* Category */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🏷️ Categoria</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>CATEGORIA</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.chipsRow}>
                 {categories.map((cat) => (
@@ -335,17 +351,19 @@ export default function AddItemScreen() {
                     key={cat.id}
                     style={[
                       styles.chip,
-                      categoryId === cat.id && styles.chipActive,
+                      { backgroundColor: colors.surface, borderColor: colors.border },
+                      categoryId === cat.id && { 
+                        backgroundColor: colors.primary + '20', 
+                        borderColor: colors.primary 
+                      },
                     ]}
                     onPress={() => setCategoryId(cat.id)}
                   >
                     <Text style={styles.chipIcon}>{cat.icon}</Text>
-                    <Text
-                      style={[
-                        styles.chipText,
-                        categoryId === cat.id && styles.chipTextActive,
-                      ]}
-                    >
+                    <Text style={[
+                      styles.chipText,
+                      { color: categoryId === cat.id ? colors.primary : colors.textSecondary }
+                    ]}>
                       {cat.name_it}
                     </Text>
                   </TouchableOpacity>
@@ -354,11 +372,11 @@ export default function AddItemScreen() {
             </ScrollView>
           </View>
           
-          {/* Location */}
+          {/* Ubicazione */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📍 Dove l'hai messo?</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>DOVE</Text>
             
-            <Text style={styles.fieldLabel}>Stanza</Text>
+            {/* Stanza */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.chipsRow}>
                 {COMMON_ROOMS.map((room) => (
@@ -366,17 +384,22 @@ export default function AddItemScreen() {
                     key={room.id}
                     style={[
                       styles.chip,
-                      locationRoom === room.name && styles.chipActive,
+                      { backgroundColor: colors.surface, borderColor: colors.border },
+                      locationRoom === room.name && { 
+                        backgroundColor: colors.primary + '20', 
+                        borderColor: colors.primary 
+                      },
                     ]}
-                    onPress={() => setLocationRoom(room.name)}
+                    onPress={() => {
+                      setLocationRoom(room.name);
+                      if (room.name !== 'Altro') setLocationRoomCustom('');
+                    }}
                   >
                     <Text style={styles.chipIcon}>{room.emoji}</Text>
-                    <Text
-                      style={[
-                        styles.chipText,
-                        locationRoom === room.name && styles.chipTextActive,
-                      ]}
-                    >
+                    <Text style={[
+                      styles.chipText,
+                      { color: locationRoom === room.name ? colors.primary : colors.textSecondary }
+                    ]}>
                       {room.name}
                     </Text>
                   </TouchableOpacity>
@@ -384,147 +407,182 @@ export default function AddItemScreen() {
               </View>
             </ScrollView>
             
-            <Text style={styles.fieldLabel}>Mobile/Contenitore</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.chipsRow}>
-                {COMMON_FURNITURE.map((furniture) => (
-                  <TouchableOpacity
-                    key={furniture.id}
-                    style={[
-                      styles.chip,
-                      locationFurniture === furniture.name && styles.chipActive,
-                    ]}
-                    onPress={() => setLocationFurniture(furniture.name)}
-                  >
-                    <Text style={styles.chipIcon}>{furniture.emoji}</Text>
-                    <Text
-                      style={[
-                        styles.chipText,
-                        locationFurniture === furniture.name && styles.chipTextActive,
-                      ]}
-                    >
-                      {furniture.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
+            {/* Campo custom per "Altro" stanza */}
+            {locationRoom === 'Altro' && (
+              <TextInput
+                style={[styles.inputSmall, { 
+                  backgroundColor: colors.surface, 
+                  borderColor: colors.border,
+                  color: colors.text,
+                  marginTop: 8 
+                }]}
+                value={locationRoomCustom}
+                onChangeText={setLocationRoomCustom}
+                placeholder="Specifica dove..."
+                placeholderTextColor={colors.textMuted}
+              />
+            )}
             
-            <Text style={styles.fieldLabel}>Dettaglio (opzionale)</Text>
+            {/* Mobile */}
+            <View style={{ marginTop: 12 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.chipsRow}>
+                  {COMMON_FURNITURE.map((furniture) => (
+                    <TouchableOpacity
+                      key={furniture.id}
+                      style={[
+                        styles.chip,
+                        { backgroundColor: colors.surface, borderColor: colors.border },
+                        locationFurniture === furniture.name && { 
+                          backgroundColor: colors.primary + '20', 
+                          borderColor: colors.primary 
+                        },
+                      ]}
+                      onPress={() => {
+                        setLocationFurniture(furniture.name);
+                        if (furniture.name !== 'Altro') setLocationFurnitureCustom('');
+                      }}
+                    >
+                      <Text style={styles.chipIcon}>{furniture.emoji}</Text>
+                      <Text style={[
+                        styles.chipText,
+                        { color: locationFurniture === furniture.name ? colors.primary : colors.textSecondary }
+                      ]}>
+                        {furniture.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+              
+              {/* Campo custom per "Altro" mobile */}
+              {locationFurniture === 'Altro' && (
+                <TextInput
+                  style={[styles.inputSmall, { 
+                    backgroundColor: colors.surface, 
+                    borderColor: colors.border,
+                    color: colors.text,
+                    marginTop: 8 
+                  }]}
+                  value={locationFurnitureCustom}
+                  onChangeText={setLocationFurnitureCustom}
+                  placeholder="Specifica contenitore..."
+                  placeholderTextColor={colors.textMuted}
+                />
+              )}
+            </View>
+            
+            {/* Dettaglio */}
             <TextInput
-              style={styles.input}
+              style={[styles.inputSmall, { 
+                backgroundColor: colors.surface, 
+                borderColor: colors.border,
+                color: colors.text,
+                marginTop: 12 
+              }]}
               value={locationDetail}
               onChangeText={setLocationDetail}
-              placeholder="Es: Scatola bianca sopra"
-              placeholderTextColor="#666"
+              placeholder="Dettaglio posizione (opzionale)"
+              placeholderTextColor={colors.textMuted}
             />
           </View>
           
-          {/* Labels */}
+          {/* Condizione */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🏷️ Etichette</Text>
-            <View style={styles.labelsGrid}>
-              {Object.values(ITEM_LABELS).map((label) => {
-                const info = LABEL_INFO[label as ItemLabel];
-                if (!info) return null;
-                const isSelected = selectedLabels.includes(label);
-                return (
-                  <TouchableOpacity
-                    key={label}
-                    style={[
-                      styles.labelChip,
-                      { backgroundColor: isSelected ? info.color + '30' : '#1a1a2e' },
-                      isSelected && { borderColor: info.color, borderWidth: 1 },
-                    ]}
-                    onPress={() => toggleLabel(label)}
-                  >
-                    <Text style={styles.labelEmoji}>{info.emoji}</Text>
-                    <Text
-                      style={[
-                        styles.labelName,
-                        { color: isSelected ? info.color : '#888' },
-                      ]}
-                    >
-                      {info.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+            <Text style={[styles.label, { color: colors.textSecondary }]}>CONDIZIONE</Text>
+            <View style={styles.chipsRow}>
+              {[
+                { value: 'nuovo', label: 'Nuovo' },
+                { value: 'ottimo', label: 'Ottimo' },
+                { value: 'buono', label: 'Buono' },
+                { value: 'usato', label: 'Usato' },
+                { value: 'da_riparare', label: 'Da riparare' },
+              ].map((c) => (
+                <TouchableOpacity
+                  key={c.value}
+                  style={[
+                    styles.chip,
+                    { backgroundColor: colors.surface, borderColor: colors.border },
+                    condition === c.value && { 
+                      backgroundColor: colors.primary + '20', 
+                      borderColor: colors.primary 
+                    },
+                  ]}
+                  onPress={() => setCondition(c.value as ItemCondition)}
+                >
+                  <Text style={[
+                    styles.chipText,
+                    { color: condition === c.value ? colors.primary : colors.textSecondary }
+                  ]}>
+                    {c.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
           
-          {/* Visibility */}
+          {/* Note */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>👁️ Visibilità</Text>
-            
-            <View style={styles.visibilityOption}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>NOTE</Text>
+            <TextInput
+              style={[styles.input, styles.textArea, { 
+                backgroundColor: colors.surface, 
+                borderColor: colors.border,
+                color: colors.text 
+              }]}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Dettagli, difetti, dimensioni..."
+              placeholderTextColor={colors.textMuted}
+              multiline
+              numberOfLines={3}
+            />
+          </View>
+          
+          {/* Riuso - Economia circolare */}
+          <View style={[styles.reuseSection, { 
+            backgroundColor: colors.surfaceElevated,
+            borderColor: colors.border 
+          }]}>
+            <View style={styles.reuseHeader}>
               <View>
-                <Text style={styles.visibilityTitle}>Condividi con i vicini</Text>
-                <Text style={styles.visibilitySubtitle}>
-                  Rendi visibile questo oggetto a chi cerca nei dintorni
+                <Text style={[styles.reuseTitle, { color: colors.text }]}>
+                  ♻️ Disponibile per riuso
+                </Text>
+                <Text style={[styles.reuseSubtitle, { color: colors.textMuted }]}>
+                  Visibile ai vicini che cercano
                 </Text>
               </View>
               <Switch
                 value={visibility === 'public'}
-                onValueChange={(value) => setVisibility(value ? 'public' : 'private')}
-                trackColor={{ false: '#2a2a4e', true: '#e9456050' }}
-                thumbColor={visibility === 'public' ? '#e94560' : '#666'}
+                onValueChange={(v) => setVisibility(v ? 'public' : 'private')}
+                trackColor={{ false: colors.border, true: colors.primary + '60' }}
+                thumbColor={visibility === 'public' ? colors.primary : colors.textMuted}
               />
             </View>
             
             {visibility === 'public' && (
-              <View style={styles.sharingOptions}>
-                <Text style={styles.fieldLabel}>Modalità</Text>
-                <View style={styles.chipsRow}>
-                  {[
-                    { mode: 'prestito' as SharingMode, label: '🤝 Prestito', desc: 'Gratuito' },
-                    { mode: 'baratto' as SharingMode, label: '🔄 Baratto', desc: 'Scambio' },
-                    { mode: 'offerta' as SharingMode, label: '💰 Offerta', desc: 'Con contributo' },
-                  ].map(({ mode, label, desc }) => (
-                    <TouchableOpacity
-                      key={mode}
-                      style={[
-                        styles.sharingChip,
-                        sharingMode === mode && styles.sharingChipActive,
-                      ]}
-                      onPress={() => setSharingMode(mode)}
-                    >
-                      <Text style={styles.sharingLabel}>{label}</Text>
-                      <Text style={styles.sharingDesc}>{desc}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                
-                {sharingMode === 'offerta' && (
-                  <View style={styles.priceInput}>
-                    <Text style={styles.priceLabel}>€</Text>
-                    <TextInput
-                      style={styles.priceField}
-                      value={price}
-                      onChangeText={setPrice}
-                      placeholder="0.00"
-                      placeholderTextColor="#666"
-                      keyboardType="decimal-pad"
-                    />
-                  </View>
-                )}
-              </View>
+              <Text style={[styles.reuseNote, { color: colors.textMuted }]}>
+                L'oggetto resta tuo. Chi lo vuole ti contatta.
+                {'\n'}Economia orizzontale: niente soldi, solo riuso.
+              </Text>
             )}
           </View>
           
           {/* Submit */}
           <TouchableOpacity
-            style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
+            style={[
+              styles.submitButton, 
+              { backgroundColor: colors.primary },
+              isLoading && styles.submitButtonDisabled
+            ]}
             onPress={handleSubmit}
             disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                <Text style={styles.submitButtonText}>Aggiungi alla Soffitta</Text>
-              </>
+              <Text style={styles.submitText}>Aggiungi</Text>
             )}
           </TouchableOpacity>
         </>
@@ -536,171 +594,99 @@ export default function AddItemScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f1a',
   },
   content: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 100,
   },
   modeToggle: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
+    borderRadius: 8,
     padding: 4,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   modeButton: {
     flex: 1,
-    flexDirection: 'row',
+    paddingVertical: 10,
+    borderRadius: 6,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    borderRadius: 10,
-  },
-  modeButtonActive: {
-    backgroundColor: '#e94560',
   },
   modeText: {
-    color: '#888',
+    fontSize: 14,
     fontWeight: '500',
-  },
-  modeTextActive: {
-    color: '#fff',
+    letterSpacing: 0.3,
   },
   voiceMode: {
     alignItems: 'center',
-    paddingVertical: 40,
-  },
-  voiceCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#e9456020',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  voiceTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 12,
-  },
-  voiceSubtitle: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  voiceButton: {
-    backgroundColor: '#e94560',
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 30,
-  },
-  voiceButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  voiceHintBox: {
-    backgroundColor: '#1a1a2e',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 20,
-    width: '100%',
-  },
-  voiceHintTitle: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
+    paddingVertical: 48,
   },
   voiceHint: {
-    color: '#888',
+    marginTop: 24,
     fontSize: 13,
-    lineHeight: 20,
-  },
-  neuronCare: {
-    marginTop: 20,
-    color: '#4A90A4',
-    fontSize: 12,
-    fontStyle: 'italic',
     textAlign: 'center',
-    paddingHorizontal: 20,
+    fontStyle: 'italic',
   },
   section: {
     marginBottom: 24,
   },
-  sectionTitle: {
-    fontSize: 16,
+  label: {
+    fontSize: 11,
     fontWeight: '600',
-    color: '#fff',
-    marginBottom: 12,
-  },
-  fieldLabel: {
-    fontSize: 13,
-    color: '#888',
-    marginBottom: 8,
-    marginTop: 12,
+    letterSpacing: 1.5,
+    marginBottom: 10,
   },
   input: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    borderRadius: 8,
+    paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#fff',
     borderWidth: 1,
-    borderColor: '#2a2a4e',
+  },
+  inputSmall: {
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+    borderWidth: 1,
   },
   textArea: {
     minHeight: 80,
     textAlignVertical: 'top',
   },
-  photosGrid: {
+  photosRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
-  photoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
+  photoThumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
     overflow: 'hidden',
   },
-  photo: {
+  photoImage: {
     width: '100%',
     height: '100%',
   },
   photoRemove: {
     position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: '#00000080',
+    top: 2,
+    right: 2,
+    backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 10,
     padding: 2,
   },
-  photoActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  photoButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    backgroundColor: '#1a1a2e',
+  photoAdd: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#2a2a4e',
-    borderStyle: 'dashed',
   },
   chipsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   chip: {
@@ -709,123 +695,52 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#1a1a2e',
-  },
-  chipActive: {
-    backgroundColor: '#e9456020',
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#e94560',
   },
   chipIcon: {
     fontSize: 14,
   },
   chipText: {
-    color: '#888',
     fontSize: 13,
+    fontWeight: '400',
   },
-  chipTextActive: {
-    color: '#e94560',
+  reuseSection: {
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
   },
-  labelsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  labelChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  labelEmoji: {
-    fontSize: 14,
-  },
-  labelName: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  visibilityOption: {
+  reuseHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
-    padding: 16,
-    borderRadius: 12,
   },
-  visibilityTitle: {
-    color: '#fff',
+  reuseTitle: {
     fontSize: 15,
     fontWeight: '500',
   },
-  visibilitySubtitle: {
-    color: '#888',
+  reuseSubtitle: {
     fontSize: 12,
     marginTop: 2,
   },
-  sharingOptions: {
-    marginTop: 16,
-  },
-  sharingChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: '#1a1a2e',
-    alignItems: 'center',
-  },
-  sharingChipActive: {
-    backgroundColor: '#e9456020',
-    borderWidth: 1,
-    borderColor: '#e94560',
-  },
-  sharingLabel: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  sharingDesc: {
-    color: '#888',
-    fontSize: 11,
-    marginTop: 2,
-  },
-  priceInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    paddingHorizontal: 16,
+  reuseNote: {
+    fontSize: 12,
     marginTop: 12,
-  },
-  priceLabel: {
-    color: '#e94560',
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  priceField: {
-    flex: 1,
-    paddingVertical: 14,
-    paddingLeft: 8,
-    fontSize: 20,
-    color: '#fff',
+    lineHeight: 18,
   },
   submitButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#e94560',
     paddingVertical: 16,
-    borderRadius: 12,
-    marginTop: 12,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
-  submitButtonText: {
+  submitText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
 });

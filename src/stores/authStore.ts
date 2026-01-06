@@ -3,6 +3,47 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { Profile } from '@/lib/database.types';
 
+// 🔧 DEV MODE - Bypassa auth per testing
+const DEV_MODE = process.env.EXPO_PUBLIC_APP_ENV === 'development';
+const DEV_SKIP_AUTH = true; // Cambia a false per testare il login
+
+// Mock user per development
+const MOCK_USER: User = {
+  id: 'dev-user-001',
+  email: 'dev@soffitta.app',
+  app_metadata: {},
+  user_metadata: { display_name: 'Dev User' },
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+};
+
+const MOCK_PROFILE: Profile = {
+  id: 'dev-user-001',
+  display_name: 'Dev User',
+  avatar_url: null,
+  bio: 'Account di sviluppo',
+  location_lat: 45.7578,
+  location_lng: 8.5567,
+  location_radius_km: 5,
+  phone_verified: false,
+  identity_verified: false,
+  badges: ['early_adopter'],
+  reputation_score: 100,
+  total_items: 0,
+  total_shares: 0,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
+const MOCK_SESSION: Session = {
+  access_token: 'dev-token',
+  refresh_token: 'dev-refresh',
+  token_type: 'bearer',
+  expires_in: 3600,
+  expires_at: Date.now() + 3600000,
+  user: MOCK_USER,
+};
+
 interface AuthState {
   // State
   session: Session | null;
@@ -28,6 +69,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isInitialized: false,
   
   initialize: async () => {
+    // 🔧 DEV MODE - Skip auth
+    if (DEV_MODE && DEV_SKIP_AUTH) {
+      console.log('🔧 DEV MODE: Auth bypassed');
+      set({
+        session: MOCK_SESSION,
+        user: MOCK_USER,
+        profile: MOCK_PROFILE,
+        isLoading: false,
+        isInitialized: true,
+      });
+      return;
+    }
+    
     try {
       // Ottieni sessione corrente
       const { data: { session } } = await supabase.auth.getSession();

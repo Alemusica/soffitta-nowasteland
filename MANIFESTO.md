@@ -8,7 +8,9 @@
 
 ---
 
-## Il Problema
+## Il Problema: Due Crisi Invisibili
+
+### 🧠 Crisi Cognitiva
 
 Viviamo in un'epoca straordinaria. L'intelligenza artificiale può scrivere, pensare, ricordare al posto nostro. Può rispondere a qualsiasi domanda in millisecondi. Può organizzare, pianificare, decidere.
 
@@ -22,6 +24,41 @@ Studi del MIT, Harvard e Stanford dimostrano che:
 - Il "cognitive offloading" sistematico **indebolisce i circuiti neurali**
 
 Non è fantascienza. È biologia. I neuroni che non usiamo, li perdiamo.
+
+### ♻️ Crisi degli Oggetti: Obsolescenza Intrinseca vs Estrinseca
+
+C'è un'altra crisi di cui parliamo poco: **l'obsolescenza artificiale degli oggetti**.
+
+Ogni oggetto ha due tipi di funzione:
+
+- **Funzione Intrinseca**: ciò che l'oggetto *è* per sua natura
+- **Funzione Estrinseca**: ciò per cui l'oggetto viene *usato* commercialmente
+
+**Esempio: La bottiglia di Coca-Cola**
+
+Una bottiglia di plastica è, intrinsecamente, un **contenitore**. La sua funzione naturale è contenere liquidi. Questa funzione persiste indefinitamente.
+
+Ma commercialmente, viene venduta come "bottiglia di Coca-Cola". Una volta bevuto il contenuto, la funzione estrinseca è "esaurita" - e la bottiglia viene gettata.
+
+**Ma la bottiglia non è rotta.** La sua funzione intrinseca è intatta. Potrebbe contenere acqua, olio, detersivo, viti, monete. Invece finisce in discarica (o peggio, in mare).
+
+Questo vale per:
+- 🔌 **Cavi e adattatori** - "Vecchio telefono" ≠ cavo inutile
+- 📚 **Libri** - "L'ho già letto" ≠ libro senza valore  
+- 🧰 **Attrezzi** - "Non faccio più bricolage" ≠ trapano da buttare
+- 👕 **Abbigliamento** - "Non mi sta più" ≠ vestito da eliminare
+
+### Economia Orizzontale
+
+**Soffitta NoWasteLand** nasce per combattere questa doppia crisi:
+
+1. **Cognitiva**: aiutandoti a ricordare dove sono i tuoi oggetti (senza sostituire la tua memoria)
+2. **Materiale**: permettendo agli oggetti di continuare a vivere, passando da chi non li usa a chi ne ha bisogno
+
+Non vendiamo. Non scambiamo. Non prestiamo con condizioni.
+**Condividiamo. Riusiamo. L'oggetto continua a esistere.**
+
+È economia circolare nella sua forma più pura: orizzontale, senza intermediari monetari, basata sulla fiducia tra vicini.
 
 ---
 

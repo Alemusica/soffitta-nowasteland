@@ -1,3 +1,10 @@
+/**
+ * Register Screen - Soffitta NoWasteLand
+ * 
+ * Swiss Typography Design
+ * Clean, warm, calming aesthetic
+ */
+
 import { useState } from 'react';
 import {
   View,
@@ -13,8 +20,10 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuthStore } from '@/stores/authStore';
+import { useColors } from '@/stores/themeStore';
 
 export default function RegisterScreen() {
+  const colors = useColors();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +31,7 @@ export default function RegisterScreen() {
   const { signUpWithEmail, isLoading } = useAuthStore();
   
   const handleRegister = async () => {
-    if (!displayName || !email || !password || !confirmPassword) {
+    if (!displayName || !email || !password) {
       Alert.alert('Errore', 'Compila tutti i campi');
       return;
     }
@@ -33,7 +42,7 @@ export default function RegisterScreen() {
     }
     
     if (password.length < 6) {
-      Alert.alert('Errore', 'La password deve essere di almeno 6 caratteri');
+      Alert.alert('Errore', 'La password deve avere almeno 6 caratteri');
       return;
     }
     
@@ -43,9 +52,9 @@ export default function RegisterScreen() {
       Alert.alert('Errore', error.message);
     } else {
       Alert.alert(
-        'Registrazione completata',
-        'Controlla la tua email per confermare l\'account.',
-        [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
+        'Benvenuto! 🏠',
+        'Account creato. Controlla la tua email per verificare l\'account.',
+        [{ text: 'OK', onPress: () => router.replace('/(tabs)') }]
       );
     }
   };
@@ -53,7 +62,7 @@ export default function RegisterScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -62,70 +71,101 @@ export default function RegisterScreen() {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.emoji}>🏚️</Text>
-            <Text style={styles.title}>Unisciti a Soffitta</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.text }]}>Unisciti</Text>
+            <Text style={[styles.tagline, { color: colors.textMuted }]}>
               Crea il tuo inventario, condividi con i vicini
             </Text>
           </View>
           
           {/* Form */}
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Come ti chiami?</Text>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.textSecondary }]}>NOME</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.text,
+                  },
+                ]}
                 value={displayName}
                 onChangeText={setDisplayName}
-                placeholder="Mario"
-                placeholderTextColor="#666"
+                placeholder="Come ti chiami?"
+                placeholderTextColor={colors.textMuted}
                 autoCapitalize="words"
                 autoComplete="name"
               />
             </View>
             
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.textSecondary }]}>EMAIL</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.text,
+                  },
+                ]}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="la-tua@email.it"
-                placeholderTextColor="#666"
+                placeholder="nome@email.it"
+                placeholderTextColor={colors.textMuted}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoComplete="email"
               />
             </View>
             
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.textSecondary }]}>PASSWORD</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.text,
+                  },
+                ]}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Almeno 6 caratteri"
-                placeholderTextColor="#666"
+                placeholder="Minimo 6 caratteri"
+                placeholderTextColor={colors.textMuted}
                 secureTextEntry
-                autoComplete="password-new"
+                autoComplete="new-password"
               />
             </View>
             
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Conferma password</Text>
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.textSecondary }]}>CONFERMA</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    color: colors.text,
+                  },
+                ]}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="Ripeti la password"
-                placeholderTextColor="#666"
+                placeholderTextColor={colors.textMuted}
                 secureTextEntry
-                autoComplete="password-new"
+                autoComplete="new-password"
               />
             </View>
             
             <TouchableOpacity
-              style={[styles.button, isLoading && styles.buttonDisabled]}
+              style={[
+                styles.button,
+                { backgroundColor: colors.primary },
+                isLoading && styles.buttonDisabled,
+              ]}
               onPress={handleRegister}
               disabled={isLoading}
             >
@@ -137,19 +177,21 @@ export default function RegisterScreen() {
             </TouchableOpacity>
           </View>
           
-          {/* Link login */}
+          {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Hai già un account? </Text>
+            <Text style={[styles.footerText, { color: colors.textMuted }]}>
+              Hai già un account?{' '}
+            </Text>
             <Link href="/(auth)/login" asChild>
               <TouchableOpacity>
-                <Text style={styles.link}>Accedi</Text>
+                <Text style={[styles.link, { color: colors.primary }]}>Accedi</Text>
               </TouchableOpacity>
             </Link>
           </View>
           
-          {/* Info privacy */}
-          <View style={styles.privacy}>
-            <Text style={styles.privacyText}>
+          {/* Privacy note */}
+          <View style={[styles.privacyNote, { backgroundColor: colors.surfaceElevated }]}>
+            <Text style={[styles.privacyText, { color: colors.textMuted }]}>
               🔒 La tua posizione sarà sempre approssimata per privacy.
               {'\n'}Non condividiamo mai il tuo indirizzo esatto.
             </Text>
@@ -163,62 +205,51 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f1a',
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 40,
+    paddingHorizontal: 32,
+    paddingVertical: 48,
     justifyContent: 'center',
   },
   header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: 8,
+    marginBottom: 40,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: 32,
+    fontWeight: '300',
     letterSpacing: -0.5,
   },
-  subtitle: {
+  tagline: {
     fontSize: 14,
-    color: '#888',
+    fontWeight: '400',
     marginTop: 8,
-    textAlign: 'center',
+    letterSpacing: 0.3,
   },
   form: {
-    gap: 16,
+    gap: 18,
   },
-  inputContainer: {
-    gap: 6,
+  inputGroup: {
+    gap: 8,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#ccc',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.5,
   },
   input: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
     fontSize: 16,
-    color: '#fff',
+    fontWeight: '400',
     borderWidth: 1,
-    borderColor: '#2a2a4e',
   },
   button: {
-    backgroundColor: '#e94560',
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 8,
@@ -228,34 +259,31 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: 0.5,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 28,
   },
   footerText: {
-    color: '#888',
     fontSize: 14,
+    fontWeight: '400',
   },
   link: {
-    color: '#e94560',
     fontSize: 14,
     fontWeight: '500',
   },
-  privacy: {
+  privacyNote: {
     marginTop: 32,
     padding: 16,
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#2a2a4e',
+    borderRadius: 8,
   },
   privacyText: {
-    color: '#888',
     fontSize: 12,
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: 18,
   },
