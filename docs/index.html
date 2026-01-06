@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soffitta - L'inventario collettivo di quartiere</title>
+  <meta name="description" content="Riduci gli sprechi, condividi con i vicini. L'app che trasforma la tua soffitta nel tesoro del quartiere.">
+  <meta name="theme-color" content="#0f0f1a">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Soffitta - NoWasteLand">
+  <meta property="og:description" content="L'inventario collettivo di quartiere. Human assistance, not human substitution.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://soffitta.nowasteland.app/og-image.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-tertiary: #2a2a4e;
+      --accent: #e94560;
+      --accent-soft: #e9456030;
+      --text-primary: #ffffff;
+      --text-secondary: #aaaaaa;
+      --text-muted: #666666;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      z-index: 1000;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(15, 15, 26, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+    
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      font-size: 32px;
+    }
+    
+    .logo-text {
+      font-family: 'Instrument Serif', serif;
+      font-size: 24px;
+      color: var(--text-primary);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+    
+    .nav-cta {
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(233, 69, 96, 0.3);
+    }
+    
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 80%;
+      height: 150%;
+      background: radial-gradient(ellipse, var(--accent-soft) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--bg-tertiary);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    
+    .hero-badge span {
+      color: var(--success);
+    }
+    
+    h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+    }
+    
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 540px;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(233, 69, 96, 0.4);
+    }
+    
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--bg-tertiary);
+      color: var(--text-primary);
+      padding: 16px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+    }
+    
+    /* Philosophy Banner */
+    .philosophy-banner {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border-top: 1px solid var(--bg-tertiary);
+      border-bottom: 1px solid var(--bg-tertiary);
+      padding: 60px 0;
+      text-align: center;
+    }
+    
+    .philosophy-banner h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    
+    .philosophy-banner p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    
+    .philosophy-banner .highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    /* Features */
+    .features {
+      padding: 120px 0;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    
+    .section-header h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 48px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    
+    .feature-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--bg-tertiary);
+      border-radius: 20px;
+      padding: 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+    
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    
+    /* How it works */
+    .how-it-works {
+      padding: 120px 0;
+      background: var(--bg-secondary);
+    }
+    
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 64px;
+    }
+    
+    .step {
+      text-align: center;
+    }
+    
+    .step-number {
+      width: 64px;
+      height: 64px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 auto 24px;
+    }
+    
+    .step h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .step p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+    
+    /* Neuron Care Section */
+    .neuron-care {
+      padding: 120px 0;
+      position: relative;
+    }
+    
+    .neuron-care::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, var(--accent-soft) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    
+    .neuron-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .neuron-text h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 48px;
+      font-weight: 400;
+      margin-bottom: 24px;
+    }
+    
+    .neuron-text p {
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+    
+    .neuron-quote {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--accent);
+      padding: 24px;
+      margin: 32px 0;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    .neuron-quote p {
+      font-style: italic;
+      color: var(--text-primary);
+      font-size: 16px;
+      margin: 0;
+    }
+    
+    .neuron-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .brain-emoji {
+      font-size: 200px;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    /* Stats */
+    .stats {
+      padding: 80px 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--bg-tertiary);
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      text-align: center;
+    }
+    
+    .stat-item h3 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 48px;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    
+    .stat-item p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      padding: 120px 0;
+      text-align: center;
+    }
+    
+    .cta-section h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 48px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    
+    .cta-section p {
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--bg-tertiary);
+      padding: 60px 0 40px;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+    
+    .footer-brand .logo {
+      margin-bottom: 16px;
+    }
+    
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      max-width: 280px;
+    }
+    
+    .footer-links h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    
+    .footer-links ul {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+    
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid var(--bg-tertiary);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-bottom p {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .social-links a {
+      color: var(--text-secondary);
+      font-size: 20px;
+      transition: color 0.2s;
+    }
+    
+    .social-links a:hover {
+      color: var(--accent);
+    }
+    
+    /* Responsive */
+    @media (max-width: 968px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .neuron-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .neuron-visual {
+        order: -1;
+      }
+      
+      .brain-emoji {
+        font-size: 120px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .hero-cta {
+        flex-direction: column;
+      }
+      
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#" class="logo">
+        <span class="logo-icon">🏚️</span>
+        <span class="logo-text">Soffitta</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">Come funziona</a></li>
+        <li><a href="#philosophy">Filosofia</a></li>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+      </ul>
+      <a href="#cta" class="nav-cta">Prova l'app →</a>
+    </div>
+  </nav>
+  
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>●</span> Alpha disponibile · Lago Maggiore / Varese
+        </div>
+        <h1>La <em>soffitta</em> di ognuno è il tesoro di qualcun altro</h1>
+        <p class="hero-subtitle">
+          L'inventario collettivo di quartiere. Riordina casa, cataloga tutto, condividi con i vicini. Riduci gli sprechi, non comprare quello che esiste già a 500 metri.
+        </p>
+        <div class="hero-cta">
+          <a href="#" class="btn-primary">
+            🚀 Prova l'app web
+          </a>
+          <a href="https://github.com" target="_blank" class="btn-secondary">
+            ⭐ Star su GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Philosophy Banner -->
+  <div class="philosophy-banner">
+    <div class="container">
+      <h2>🧠 Human assistance, not human substitution</h2>
+      <p>
+        L'AI ti aiuta a organizzare, ma ogni 3 ricerche ti invita a <span class="highlight">ricordare da solo</span>. 
+        Perché la memoria è un muscolo. <span class="highlight">Care your neurons!</span>
+      </p>
+    </div>
+  </div>
+  
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Tutto quello che serve</h2>
+        <p>Un'app, due superpoteri: organizza la tua vita e connettiti con chi ti sta vicino.</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Inventario Personale</h3>
+          <p>Cataloga tutto mentre riordini: foto, ubicazione, condizioni. Trova subito quello che cerchi con la ricerca istantanea.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎙️</div>
+          <h3>Assistente Vocale</h3>
+          <p>Parla mentre riordini: "Ho trovato un trapano nel garage". L'app crea l'oggetto, chiede dettagli, suggerisce etichette.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🤝</div>
+          <h3>Sharing di Quartiere</h3>
+          <p>Condividi oggetti con i vicini. Prestito gratuito, baratto o piccolo contributo. Tutto sicuro in-app.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3>Ricerca Geolocalizzata</h3>
+          <p>Trova oggetti entro 1-20km. Posizione sempre approssimata per privacy. Contatta direttamente chi ce l'ha.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🏷️</div>
+          <h3>Labels Intelligenti</h3>
+          <p>Inutile, accantonato, prezioso, duplicato... Etichette che ti aiutano a decidere cosa fare di ogni oggetto.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Trust & Safety</h3>
+          <p>Verifica identità (CIE), badge progressivi, recensioni, cauzione. Scambia con fiducia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- How it works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <h2>Come funziona</h2>
+        <p>In 3 semplici passi, dalla cantina caotica al quartiere connesso.</p>
+      </div>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Riordina e cataloga</h3>
+          <p>Mentre svuoti cassetti e scatoloni, aggiungi oggetti all'app. Parla o scrivi, come preferisci.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Decidi e condividi</h3>
+          <p>Usa le etichette: lo tieni? Lo condividi? Lo cedi? Rendi pubblico quello che vuoi.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Cerca e scambia</h3>
+          <p>Ti serve qualcosa? Cerca nei dintorni. Contatta, accordati, scambia. Zero sprechi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Neuron Care -->
+  <section class="neuron-care" id="philosophy">
+    <div class="container">
+      <div class="neuron-content">
+        <div class="neuron-text">
+          <h2>La nostra filosofia</h2>
+          <p>
+            Non vogliamo rendere la tua memoria pigra. L'AI ti assiste quando serve, ma ogni tanto ti chiede di pensarci da solo.
+          </p>
+          <p>
+            Studi del MIT e Harvard dimostrano che l'uso eccessivo di assistenti digitali riduce la capacità mnemonica. Noi crediamo che la tecnologia debba <strong>potenziare</strong> l'umano, non <strong>sostituirlo</strong>.
+          </p>
+          <div class="neuron-quote">
+            <p>"Ogni 3 ricerche 'dove ho messo X?', l'app ti invita gentilmente a provare a ricordare da solo. È una piccola palestra per i tuoi neuroni."</p>
+          </div>
+          <p>
+            Usiamo l'intelligenza artificiale per liberarti dal consumismo e dallo spreco, non per farti dimenticare come funziona la tua casa.
+          </p>
+        </div>
+        <div class="neuron-visual">
+          <div class="brain-emoji">🧠</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Stats -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>∞</h3>
+          <p>Oggetti inutili nelle case italiane</p>
+        </div>
+        <div class="stat-item">
+          <h3>€500</h3>
+          <p>Risparmiabili ogni anno a famiglia</p>
+        </div>
+        <div class="stat-item">
+          <h3>0€</h3>
+          <p>Costo dell'app per sempre</p>
+        </div>
+        <div class="stat-item">
+          <h3>100%</h3>
+          <p>Open source e community driven</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <h2>Pronto a svuotare la soffitta?</h2>
+      <p>
+        Inizia gratis. Niente pubblicità. Niente abbonamenti nascosti. Solo una community che riduce gli sprechi.
+      </p>
+      <div class="cta-buttons">
+        <a href="#" class="btn-primary">🚀 Prova l'app web</a>
+        <a href="https://github.com" target="_blank" class="btn-secondary">📖 Leggi la documentazione</a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <span class="logo-icon">🏚️</span>
+            <span class="logo-text">Soffitta</span>
+          </a>
+          <p>
+            L'inventario collettivo di quartiere. Riduci gli sprechi, condividi con i vicini, cura i tuoi neuroni.
+          </p>
+        </div>
+        
+        <div class="footer-links">
+          <h4>Prodotto</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">Come funziona</a></li>
+            <li><a href="#">Roadmap</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links">
+          <h4>Risorse</h4>
+          <ul>
+            <li><a href="https://github.com" target="_blank">GitHub</a></li>
+            <li><a href="#">Documentazione</a></li>
+            <li><a href="#">API</a></li>
+            <li><a href="#">Status</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links">
+          <h4>Legale</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">GDPR</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>© 2026 Soffitta NoWasteLand. Open Source con licenza MIT.</p>
+        <div class="social-links">
+          <a href="https://github.com" target="_blank" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
