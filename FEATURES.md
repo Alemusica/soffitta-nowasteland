@@ -193,7 +193,7 @@ Mai. La tua attenzione non è in vendita.
 Il codice è open source. Contribuisci, forka, migliora.
 
 - **Licenza**: MIT
-- **Repo**: [github.com/yourusername/soffitta-nowasteland](https://github.com)
+- **Repo**: [github.com/Alemusica/soffitta-nowasteland](https://github.com/Alemusica/soffitta-nowasteland)
 - **Issues**: Segnala bug e richieste
 - **PR**: Benvenute!
 

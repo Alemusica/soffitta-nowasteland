@@ -5,7 +5,7 @@ Grazie per il tuo interesse nel contribuire! Questo progetto è community-driven
 ## 🌟 Come puoi aiutare
 
 ### 🐛 Segnalare Bug
-1. Controlla se il bug è già stato segnalato nelle [Issues](https://github.com/yourusername/soffitta-nowasteland/issues)
+1. Controlla se il bug è già stato segnalato nelle [Issues](https://github.com/Alemusica/soffitta-nowasteland/issues)
 2. Se no, apri una nuova issue con:
    - Descrizione chiara del problema
    - Passi per riprodurlo
@@ -26,7 +26,7 @@ Grazie per il tuo interesse nel contribuire! Questo progetto è community-driven
 # Forka il repo su GitHub
 
 # Clona il tuo fork
-git clone https://github.com/TUO-USERNAME/soffitta-nowasteland.git
+git clone https://github.com/YOUR-USERNAME/soffitta-nowasteland.git
 cd soffitta-nowasteland
 
 # Installa dipendenze

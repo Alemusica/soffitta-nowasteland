@@ -110,12 +110,20 @@ MIT - Questo progetto è open source e community-driven.
 
 ---
 
+## 🔗 Link Utili
+
+- **Repository**: [github.com/Alemusica/soffitta-nowasteland](https://github.com/Alemusica/soffitta-nowasteland)
+- **Landing Page**: [alemusica.github.io/soffitta-nowasteland](https://alemusica.github.io/soffitta-nowasteland)
+- **Web App**: (Coming soon)
+
 ## 🤝 Contribuire
 
 Questo è un progetto comunitario. Se vuoi contribuire:
 1. Fork del repo
 2. Crea un branch per la tua feature
 3. PR con descrizione chiara
+
+Vedi [CONTRIBUTING.md](./CONTRIBUTING.md) per le linee guida complete.
 
 **Ricorda la filosofia**: semplicità, privacy, anti-consumismo, pro-neuroni.
 
